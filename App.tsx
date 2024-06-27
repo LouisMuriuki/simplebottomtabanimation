@@ -5,6 +5,11 @@
  * @format
  */
 
+import {
+  BottomTabBarProps,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
+import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
@@ -24,94 +29,98 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+import DefaultScreen from './screens/DefaultScreen';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {Path, Svg} from 'react-native-svg';
 
 function App(): React.JSX.Element {
+  const Tab = createBottomTabNavigator();
   const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const AnimatedTabBar = ({
+    state: {index: activeIndex, routes},
+    navigation,
+    descriptors,
+  }: BottomTabBarProps) => {
+    const {bottom} = useSafeAreaInsets();
+
+    return (
+      <View style={[styles.tabBar, {padding: bottom}]}>
+        <Svg
+          width={110}
+          height={60}
+          viewBox="0 0 110 60"
+          style={[styles.activeBackground]}>
+          <Path
+            fill="#604AE6"
+            d="M20 0H0c11.046 0 20 8.953 20 20v5c0 19.33 15.67 35 35 35s35-15.67 35-35v-5c0-11.045 8.954-20 20-20H20z"
+          />
+        </Svg>
+
+        <View>
+          {routes.map((route:any,index:number                                                                                                                                              ))=>{
+            return(
+              <TabBarComponent key={index} onPress={navigation.navigate(route.name)}>
+            )
+
+          }}
+        </View>
+      </View>
+    );
   };
 
+  const TabBarComponent=()=>{
+
+  }
+
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+    <SafeAreaView style={{flex: 1}}>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <NavigationContainer>
+        <Tab.Navigator tabBar={props => <AnimatedTabBar {...props} />}>
+          <Tab.Screen name="Home" component={DefaultScreen} />
+          <Tab.Screen name="Chat" component={DefaultScreen} />
+          <Tab.Screen name="Settings" component={DefaultScreen} />
+          <Tab.Screen name="More" component={DefaultScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  tabBar: {
+    backgroundColor: 'white',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  activeBackground: {
+    position: 'absolute',
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  tabBarContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
-  highlight: {
-    fontWeight: '700',
+  component: {
+    height: 60,
+    width: 60,
+    marginTop: -5,
+  },
+  componentCircle: {
+    flex: 1,
+    borderRadius: 30,
+    backgroundColor: 'white',
+  },
+  iconContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    height: 36,
+    width: 36,
   },
 });
 
